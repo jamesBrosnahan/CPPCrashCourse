@@ -23,13 +23,45 @@ ________________________________________________________________________________
 struct Element {
 	Element* next{};
 	Element* previous{};
+	Element* tailEnd(Element* new_element) {
+		Element* tmp{new_element};
+		while (tmp->next) {
+			tmp = tmp->next;
+		}
+		return tmp;
+	}
+	Element* headEnd(Element* new_element) {
+		Element* tmp{new_element};
+		while (tmp->previous) {
+			tmp = tmp->previous;
+		}
+		return tmp;
+	}
 	void insert_after(Element* new_element) {
-		new_element->next = next;
-		next = new_element;
+		Element* tmpHead = this->headEnd(new_element);
+		Element* tmpTail = this->tailEnd(new_element);
+		if (tmpHead->previous == this && next == tmpHead) {
+			return;
+		}
+		if (next) {
+			next->previous = tmpTail;
+		}
+		tmpTail->next = next;
+		tmpHead->previous = this;
+		next = tmpHead;
 	}
 	void insert_before(Element* new_element) {
-		new_element->previous = previous;
-		previous = new_element;
+		Element* tmpHead = this->headEnd(new_element);
+		Element* tmpTail = this->tailEnd(new_element);
+		if (tmpTail->next == this && previous == tmpTail) {
+			return;
+		}
+		if (previous) {
+			previous->next = tmpHead;
+		}
+		tmpHead->previous = previous;
+		tmpTail->next = this;
+		previous = tmpTail;
 	}
 	char prefix[2];
 	short operating_number;
@@ -49,11 +81,11 @@ int main() {
 	trooper3.prefix[0] = 'L';
 	trooper3.prefix[1] = 'S';
 	trooper3.operating_number = 005;
-	
+
 	trooper1.insert_after(&trooper2);
-	trooper2.insert_after(&trooper3);
-	
-	trooper2.insert_before(&trooper1);
+	//trooper2.insert_after(&trooper3);
+
+	//trooper2.insert_before(&trooper1);
 	trooper3.insert_before(&trooper2);
 
 	for (Element *cursor = &trooper1; cursor; cursor = cursor->next) {
@@ -66,13 +98,3 @@ int main() {
 	
 	return 0;
 }
-
-
-
-
-
-
-
-
-
-
